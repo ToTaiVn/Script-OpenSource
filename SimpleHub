@@ -1,0 +1,330 @@
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Idled)) do
+	v:Disable()
+end
+local tools = {}
+
+for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+	if v:IsA("Tool") then
+		table.insert(tools, v.Name)
+	end
+end
+--FUNCTIONS
+
+function Click()
+  game:GetService'VirtualUser':CaptureController()
+			    game:GetService'VirtualUser':Button1Down(Vector2.new(0,1,0,1))
+end
+function CheckLevel()
+local MyLevel = game.Players.LocalPlayer.Data.Level.Value
+		if MyLevel == 1 or MyLevel <= 9 then
+			Ms = "Bandit [Lv. 5]"
+			NameQuest = "BanditQuest1"
+			QuestLv = 1
+			NameMon = "Bandit"
+			CFrameQ = CFrame.new(1061.66699, 16.5166187, 1544.52905, -0.942978859, -3.33851502e-09, 0.332852632, 7.04340497e-09, 1, 2.99841325e-08, -0.332852632, 3.06188177e-08, -0.942978859)
+			CFrameMon = CFrame.new(1199.31287, 52.2717781, 1536.91516, -0.929782331, 6.60215846e-08, -0.368109822, 3.9077392e-08, 1, 8.06501603e-08, 0.368109822, 6.06023249e-08, -0.929782331)
+      SPAWNPOINT = "Default"
+        elseif MyLevel == 10 or MyLevel <= 14 then -- Monkey
+			Ms = "Monkey [Lv. 14]"
+			NameQuest = "JungleQuest"
+			QuestLv = 1
+			NameMon = "Monkey"
+			CFrameQ = CFrame.new(-1604.12012, 36.8521118, 154.23732, 0.0648873374, -4.70858913e-06, -0.997892559, 1.41431883e-07, 1, -4.70933674e-06, 0.997892559, 1.64442184e-07, 0.0648873374)
+			CFrameMon = CFrame.new(-1502.74609, 98.5633316, 90.6417007, 0.836947978, 0, 0.547282517, -0, 1, -0, -0.547282517, 0, 0.836947978)
+			SPAWNPOINT = "Jungle"
+		elseif MyLevel == 15 or MyLevel <= 29 then -- Gorilla
+			Ms = "Gorilla [Lv. 20]"
+		NameQuest = "JungleQuest"
+			QuestLv = 2
+			NameMon = "Gorilla"
+			CFrameQ = CFrame.new(-1604.12012, 36.8521118, 154.23732, 0.0648873374, -4.70858913e-06, -0.997892559, 1.41431883e-07, 1, -4.70933674e-06, 0.997892559, 1.64442184e-07, 0.0648873374)
+			CFrameMon = CFrame.new(-1223.52808, 6.27936459, -502.292664, 0.310949147, -5.66602516e-08, 0.950426519, -3.37275488e-08, 1, 7.06501808e-08, -0.950426519, -5.40241736e-08, 0.310949147)
+			SPAWNPOINT = "Jungle"
+    end
+end
+
+function BTP()
+local plr = game:service("Players").LocalPlayer
+function Time(targetpos)
+    local tme = (targetpos - plr.Character.HumanoidRootPart.Position).Magnitude / plr.Character:FindFirstChildOfClass("Humanoid").WalkSpeed
+    return tme
+end
+
+local tween_s = game:service("TweenService")
+local info = TweenInfo.new(Time(cords),Enum.EasingStyle.Quad)
+function tp(...)
+local tic_k = tick();
+local params = {...};
+local cframe = CFrame.new(params[1],params[2],params[3]);
+local tween,err = pcall(function()
+local tween = tween_s:Create(plr.Character["HumanoidRootPart"],info,{CFrame=cframe});
+      tween:Play();
+end)
+   if not tween then return err end
+end
+end
+
+function Tween(Pos)
+        Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+        if game.Players.LocalPlayer.Character.Humanoid.Sit == true then game.Players.LocalPlayer.Character.Humanoid.Sit = false end
+        pcall(function() tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(Distance/210, Enum.EasingStyle.Linear),{CFrame = Pos}) end)
+        tween:Play()
+        if Distance <= 250 then
+            tween:Cancel()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
+        end
+        if _G.StopTween == true then
+            tween:Cancel()
+            _G.Clip = false
+        end
+end
+
+function GetDistance(target)
+        return math.floor((target.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude)
+end
+
+function StopTween(target)
+	if not target then
+		_G.StopTween = true
+		wait()
+		topos(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+		wait()
+		if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+			game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+		end
+		_G.StopTween = false
+		_G.Clip = false
+	end
+end
+spawn(function()
+while wait() do
+if _G.Auto_Farm_Level then
+if _G.Select_Mode_Farm == "Level Farm" then
+pcall(function()
+ CheckLevel()
+ if not string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, NameMon) or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false then
+ game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
+ if BypassTP then
+ if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFrameQ.Position).Magnitude > 2000 then
+ BTP(CFrameQ)
+ wait(3)
+ elseif (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFrameQ.Position).Magnitude < 2000 then
+    Tween(CFrameQ)
+ end
+ else
+    Tween(CFrameQ)
+                end
+                 if (CFrameQ.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 10 then
+ game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest",NameQuest,QuestLv)
+ end
+ elseif string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, NameMon) or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == true then
+ for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+ if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+ if v.Name == Ms then
+ repeat game:GetService("RunService").Heartbeat:wait()
+ EquipTool(SelectWeapon)
+ Fastattack = true
+ Tween(v.HumanoidRootPart.CFrame * Farm_Mode)
+ v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+ v.HumanoidRootPart.Transparency = 1
+ v.Humanoid.JumpPower = 0
+ v.Humanoid.WalkSpeed = 0
+ v.HumanoidRootPart.CanCollide = false
+v.Humanoid:ChangeState(11)
+v.Humanoid:ChangeState(14)
+ FarmPos = v.HumanoidRootPart.CFrame
+ MonFarm = v.Name
+ Click()
+ if v.Humanoid.Health <= 0 and v.Humanoid:FindFirstChild("Animator") then
+ v.Humanoid.Animator:Destroy()
+ end
+ until not _G.Auto_Farm_Level or not v.Parent or v.Humanoid.Health <= 0 or not game:GetService("Workspace").Enemies:FindFirstChild(v.Name) or game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible == false
+ Fastattack = false
+ end
+ end
+ end
+ Tween(CFrameMon)
+ for i,v in pairs(game:GetService("Workspace")["_WorldOrigin"].EnemySpawns:GetChildren()) do
+ if string.find(v.Name,NameMon) then
+ if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Position).Magnitude >= 10 then
+ Tween(v.CFrame * Farm_Mode)
+ Tween(CFrameMon)
+ end
+ end
+ end
+ end
+ end)
+        end
+      end
+    end
+    end)
+
+--Lib Ui
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Test BF • Simple Hub", HidePremium = false, IntroText = "Test Version No Permision Don't Use!!", SaveConfig = true, ConfigFolder = "BFTESTSIMPLEHUB"})
+
+local MainTab = Window:MakeTab({
+	Name = "🏡|Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = MainTab:AddSection({
+	Name = "Weapon Select!"
+})
+
+local toolDropDown = MainTab:AddDropdown({
+	Name = "Select Weapon To Farm",
+	Default = "",
+	Options = tools,
+	Callback = function(Value)
+		SelectWeapon = Value
+      end    
+})
+      game.Players.LocalPlayer.Backpack.DescendantAdded:Connect(function(tool)
+	local toolName = tool.Name
+	if tool:IsA("Tool") then
+		table.insert(tools, toolName)
+            toolDropDown:Refresh(tools,true)
+    end
+  end)
+game.Players.LocalPlayer.Backpack.DescendantRemoving:Connect(function(tool)
+	local toolName = tool.Name
+	if tool:IsA("Tool") then
+		for i,v in pairs(tools) do
+			if v == toolName then
+				table.remove(tools, i)
+			end
+		end	
+	end
+	toolDropdown:Refresh(tools, true)
+end)
+
+      
+local Section = MainTab:AddSection({
+	Name = "----\\\ Farming ----///"
+})
+
+local Section = MainTab:AddSection({
+	Name = "NOW WE JUST MAKE LEVEL FARM"
+})
+
+
+
+MainTab:AddDropdown({
+	Name = "Select Mode Farm",
+	Default = "",
+	Options = "Level Farm",
+	Callback = function(Value)
+		_G.Select_Mode_Farm = Value
+	end    
+})
+
+MainTab:AddToggle({
+	Name = "Start Auto Farm",
+	Default = false,
+	Callback = function(Value)
+	_G.Auto_Farm_Level = Value
+	end    
+})
+
+
+
+
+local STab = Window:MakeTab({
+	Name = "🔱|Setting",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+STab:AddToggle({
+	Name = "Auto Set Spawn Point",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoSetSpawn = Value
+	end    
+})
+
+spawn(function()
+ pcall(function()
+  while wait() do
+  if _G.AutoSetSpawn then
+  if game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0 then
+  game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
+  end
+  end
+  end
+  end)
+ end)
+
+STab:AddSlider({
+	Name = "Distance Farm",
+	Min = 1,
+	Max = 100,
+	Default = 20,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Distance",
+	Callback = function(Value)
+		_G.DistanceMob = Value
+	end    
+})
+
+
+
+STab:AddDropdown({
+	Name = "Select Method Farm",
+	Default = "Upper",
+	Options = {"Behind","Below","Upper"},
+	Callback = function(Value)
+		_G.Method = Value
+	end    
+})
+
+spawn(function()
+ while wait() do
+ pcall(function()
+  if _G.Method == "Behind" then
+  Farm_Mode = CFrame.new(0,0,_G.DistanceMob)
+  elseif _G.Method == "Below" then
+  MethodFarm = CFrame.new(0,-_G.DistanceMob,0) * CFrame.Angles(math.rad(90),0,0)
+  elseif _G.Method == "Upper" then
+  Farm_Mode = CFrame.new(0,_G.DistanceMob,0) * CFrame.Angles(math.rad(-90),0,0)
+  else
+   Farm_Mode = CFrame.new(0,_G.DistanceMob,0)
+  end
+  end)
+ end
+ end)
+
+STab:AddToggle({
+	Name = "Fast Attack",
+	Default = false,
+	Callback = function(Value)
+		Fastattack = Value
+	end    
+})
+
+local CombatFramework = require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework)
+local Camera = require(game.ReplicatedStorage.Util.CameraShaker)
+Camera:Stop()
+coroutine.wrap(function()
+    game:GetService("RunService").Stepped:Connect(function()
+        if Fastattack then
+        if getupvalues(CombatFramework)[2]['activeController'].timeToNextAttack then
+            getupvalues(CombatFramework)[2]['activeController'].timeToNextAttack = 0
+            getupvalues(CombatFramework)[2]['activeController'].hitboxMagnitude = 25
+            getupvalues(CombatFramework)[2]['activeController']:attack()
+        end
+        end
+    end)
+end)()
+
+local Section = STab:AddSection({
+	Name = "Best Script Soon"
+})
+
+OrionLib:Init()
+
+
